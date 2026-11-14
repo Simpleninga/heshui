@@ -1,7 +1,7 @@
 {
   "name": "heshui",
   "productName": "喝水打卡",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "喝水打卡：一份界面，安卓、iPhone、iPad、Windows、Mac 都能装",
   "main": "electron/main.js",
   "private": true,

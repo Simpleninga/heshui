@@ -33,12 +33,21 @@ jobs:
           npm install --no-audit --no-fund
           npx cap add android
           npx cap sync android
-          # 固定的签名钥匙：每次打出来的包签名一样，手机上才能直接覆盖升级
-          mkdir -p ~/.android && cp ci/debug.keystore ~/.android/debug.keystore
           cd android
+          # 固定的签名钥匙：每次打出来的包签名一样，手机上才能直接覆盖升级
+          # （把钥匙拷到 ~/.android 在云电脑上不生效，1.0.0、1.0.1 都踩了，必须在这里写明）
+          cat >> app/build.gradle <<'GRADLE'
+          android { signingConfigs { debug { storeFile file("$rootDir/../ci/debug.keystore") } } }
+          GRADLE
           sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"$VER\"/" app/build.gradle
           grep -E "versionCode|versionName" app/build.gradle
           ./gradlew assembleDebug --no-daemon
+          # 核对：包的签名必须是仓库里那把钥匙，不对就让打包失败
+          WANT=$(keytool -exportcert -keystore ../ci/debug.keystore -storepass android -alias androiddebugkey | sha256sum | cut -d' ' -f1)
+          BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+          GOT=$($BT/apksigner verify --print-certs app/build/outputs/apk/debug/app-debug.apk | grep -m1 "SHA-256" | awk '{print $NF}')
+          echo "签名指纹：应为 $WANT，实际 $GOT"
+          [ "$WANT" = "$GOT" ] || { echo "签名不对，手机上会更新失败"; exit 1; }
           mkdir -p ../out && cp app/build/outputs/apk/debug/app-debug.apk ../out/heshui-$VER-android.apk
       - uses: actions/upload-artifact@v4
         with:
