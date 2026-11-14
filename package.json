@@ -1,7 +1,7 @@
 {
   "name": "heshui",
   "productName": "喝水打卡",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "喝水打卡：一份界面，安卓、iPhone、iPad、Windows、Mac 都能装",
   "main": "electron/main.js",
   "private": true,
@@ -22,6 +22,6 @@
     "directories": { "output": "dist-desktop" },
     "files": ["www/**", "electron/**", "package.json"],
     "win": { "target": "portable" },
-    "mac": { "target": "dmg", "identity": null, "category": "public.app-category.healthcare-fitness" }
+    "mac": { "target": "dmg", "identity": "-", "hardenedRuntime": false, "category": "public.app-category.healthcare-fitness" }
   }
 }

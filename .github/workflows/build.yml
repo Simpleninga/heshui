@@ -77,6 +77,17 @@ jobs:
           codesign -f -s - --timestamp=none Payload/App.app
           mkdir -p ../../out
           zip -qry ../../out/heshui-$VER-ios.ipa Payload
+      - name: 再打一个苹果官方模拟器用的版本（只用来在 Mac 上录演示画面，真手机装不了它）
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          cd ios/App
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -sdk iphonesimulator -derivedDataPath build-sim -quiet \
+            CODE_SIGNING_ALLOWED=NO \
+            MARKETING_VERSION=$VER CURRENT_PROJECT_VERSION=${{ github.run_number }} build
+          cd build-sim/Build/Products/Release-iphonesimulator
+          codesign -f -s - --timestamp=none App.app
+          zip -qry "$GITHUB_WORKSPACE/out/heshui-$VER-ios-simulator.zip" App.app
       - uses: actions/upload-artifact@v4
         with:
           name: ios
