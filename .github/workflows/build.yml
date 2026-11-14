@@ -141,7 +141,7 @@ jobs:
           VER=$(node -p "require('./package.json').version")
           echo "window.APP_VERSION = '$VER';" > www/version.js
           npm install --no-audit --no-fund
-          npx tauri build --target universal-apple-darwin --bundles dmg
+          npx tauri build --target universal-apple-darwin --bundles app,dmg
           B=src-tauri/target/universal-apple-darwin/release/bundle
           for a in $B/macos/*.app; do echo "== $a"; codesign -dv "$a" 2>&1 | grep -E "Signature|flags"; codesign --verify --deep --strict "$a" && echo "签名完整" || { echo "签名不完整"; exit 1; }; done
           mkdir -p out && cp $B/dmg/*.dmg out/heshui-$VER-mac.dmg
