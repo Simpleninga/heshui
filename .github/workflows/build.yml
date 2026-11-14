@@ -10,10 +10,6 @@ on:
 permissions:
   contents: write
 
-env:
-  # 手机版用不到 Electron，省得每台云电脑都下载 100 多 MB
-  ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
-
 jobs:
   android:
     runs-on: ubuntu-latest
@@ -104,46 +100,56 @@ jobs:
 
   windows:
     runs-on: windows-latest
-    env:
-      ELECTRON_SKIP_BINARY_DOWNLOAD: ""
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: 打包 Windows
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: 打包 Windows（单个 exe，双击就开，不用安装）
         shell: bash
         run: |
           VER=$(node -p "require('./package.json').version")
           echo "window.APP_VERSION = '$VER';" > www/version.js
           npm install --no-audit --no-fund
-          npx electron-builder --win portable --x64 --publish never
+          npx tauri build --no-bundle
+          mkdir -p out && cp src-tauri/target/release/heshui.exe out/heshui-$VER-win-x64.exe
+          ls -la out
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: dist-desktop/*.exe
+          path: out/*
 
   mac:
     runs-on: macos-26
-    env:
-      ELECTRON_SKIP_BINARY_DOWNLOAD: ""
-      CSC_IDENTITY_AUTO_DISCOVERY: "false"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: 打包 Mac（苹果芯片 + 老的英特尔芯片各一个）
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: 打包 Mac（一个包，新老芯片的 Mac 都能装）
         run: |
           VER=$(node -p "require('./package.json').version")
           echo "window.APP_VERSION = '$VER';" > www/version.js
           npm install --no-audit --no-fund
-          npx electron-builder --mac dmg --arm64 --x64 --publish never
-          for a in dist-desktop/mac*/*.app; do echo "== $a"; codesign -dv "$a" 2>&1 | head -5; codesign --verify --deep "$a" && echo "签名完整" || echo "签名不完整"; done
+          npx tauri build --target universal-apple-darwin --bundles dmg
+          B=src-tauri/target/universal-apple-darwin/release/bundle
+          for a in $B/macos/*.app; do echo "== $a"; codesign -dv "$a" 2>&1 | grep -E "Signature|flags"; codesign --verify --deep --strict "$a" && echo "签名完整" || { echo "签名不完整"; exit 1; }; done
+          mkdir -p out && cp $B/dmg/*.dmg out/heshui-$VER-mac.dmg
+          ls -la out
       - uses: actions/upload-artifact@v4
         with:
           name: mac
-          path: dist-desktop/*.dmg
+          path: out/*
 
   release:
     needs: [android, ios, windows, mac]

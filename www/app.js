@@ -60,7 +60,7 @@ function change(delta) {
 
 function platformName() {
   const ua = navigator.userAgent;
-  if (window.heshuiDesktop) return window.heshuiDesktop.platform === 'darwin' ? 'Mac' : 'Windows';
+  if (window.__TAURI_INTERNALS__) return /Windows/.test(ua) ? 'Windows' : 'Mac'; // 电脑版外壳
   if (/iPad|Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return 'iPad';
   if (/iPhone/.test(ua)) return 'iPhone';
   if (/Android/.test(ua)) return '安卓';

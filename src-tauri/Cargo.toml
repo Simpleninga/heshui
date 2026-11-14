@@ -1,0 +1,11 @@
+# 电脑版（Windows / Mac）的外壳：用系统自带的网页引擎显示 www/，安装包只有几 MB
+[package]
+name = "heshui"
+version = "0.0.0"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
