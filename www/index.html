@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>喝水打卡</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>喝水打卡</h1>
+      <p class="date" id="date"></p>
+    </header>
+
+    <section class="ring-box">
+      <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="ring-bg" cx="100" cy="100" r="86"/>
+        <circle class="ring-fg" id="ring" cx="100" cy="100" r="86"/>
+      </svg>
+      <div class="ring-text">
+        <div class="cups"><span id="count">0</span><small> / <span id="goal">8</span> 杯</small></div>
+        <div class="tip" id="tip">今天还没喝水</div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button class="btn-minus" id="minus" aria-label="减一杯">−</button>
+      <button class="btn-add" id="add">喝了一杯</button>
+    </section>
+
+    <section class="week">
+      <h2>最近 7 天</h2>
+      <div class="bars" id="bars"></div>
+    </section>
+
+    <footer>版本 <span id="ver"></span> · <span id="platform"></span></footer>
+  </main>
+  <script src="version.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

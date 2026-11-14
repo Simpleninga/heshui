@@ -1,0 +1,73 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f2f7fb;
+  --card: #ffffff;
+  --ink: #1b2a38;
+  --sub: #6b7c8c;
+  --water: #2f8cff;
+  --water-light: #d6e9ff;
+}
+
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: calc(env(safe-area-inset-top) + 28px) 24px calc(env(safe-area-inset-bottom) + 20px);
+}
+
+header h1 { font-size: 28px; font-weight: 700; }
+header .date { margin-top: 4px; color: var(--sub); font-size: 15px; }
+
+.ring-box { position: relative; width: 240px; height: 240px; margin: 0 auto; }
+.ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 16; }
+.ring-bg { stroke: var(--water-light); }
+.ring-fg {
+  stroke: var(--water);
+  stroke-linecap: round;
+  stroke-dasharray: 540.35;
+  stroke-dashoffset: 540.35;
+  transition: stroke-dashoffset .5s ease;
+}
+.ring-text {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.cups span#count { font-size: 64px; font-weight: 800; color: var(--water); }
+.cups small { font-size: 18px; color: var(--sub); }
+.tip { margin-top: 6px; font-size: 15px; color: var(--sub); }
+
+.actions { display: flex; gap: 14px; }
+.actions button {
+  border: none; border-radius: 18px; font-size: 20px; font-weight: 700;
+  height: 64px; cursor: pointer;
+}
+.btn-add { flex: 1; background: var(--water); color: #fff; }
+.btn-add:active { transform: scale(.98); }
+.btn-minus { width: 64px; background: var(--card); color: var(--sub); }
+
+.week { background: var(--card); border-radius: 20px; padding: 18px 18px 14px; }
+.week h2 { font-size: 16px; font-weight: 600; margin-bottom: 14px; }
+.bars { display: flex; justify-content: space-between; align-items: flex-end; height: 120px; gap: 8px; }
+.bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.bar i { display: block; width: 100%; max-width: 28px; border-radius: 8px; background: var(--water-light); min-height: 4px; }
+.bar.done i { background: var(--water); }
+.bar span { font-size: 12px; color: var(--sub); }
+.bar b { font-size: 12px; font-weight: 600; }
+
+footer { margin-top: auto; text-align: center; font-size: 12px; color: var(--sub); }
