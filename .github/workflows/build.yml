@@ -109,14 +109,14 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
-      - name: 打包 Windows（单个 exe，双击就开，不用安装）
+      - name: 打包 Windows（安装包：电脑上缺系统网页组件 WebView2 时，安装时自动从微软补上）
         shell: bash
         run: |
           VER=$(node -p "require('./package.json').version")
           echo "window.APP_VERSION = '$VER';" > www/version.js
           npm install --no-audit --no-fund
-          npx tauri build --no-bundle
-          mkdir -p out && cp src-tauri/target/release/heshui.exe out/heshui-$VER-win-x64.exe
+          npx tauri build --bundles nsis
+          mkdir -p out && cp src-tauri/target/release/bundle/nsis/*-setup.exe out/heshui-$VER-win-setup.exe
           ls -la out
       - uses: actions/upload-artifact@v4
         with:
